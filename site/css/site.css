@@ -303,22 +303,38 @@ p { margin: 0 0 1.15em; }
 }
 .facade:hover img { transform: scale(1.028); filter: brightness(.9); }
 
-.facade__play {
-  position: absolute; inset: 0;
-  display: grid; place-items: center;
+/* The play badge is drawn here rather than inlined as SVG in every card.
+   It is decoration — 34 copies of the same path was 34 places to edit.
+   Proportions follow the original 68x48 mark: the triangle is 18/68 of
+   the badge width and sits a hair right of centre. */
+.facade::before, .facade::after {
+  content: "";
+  position: absolute; top: 50%; left: 50%;
   pointer-events: none;
-}
-.facade__play svg {
-  width: clamp(2.9rem, 6vw, 3.6rem); height: auto;
-  filter: drop-shadow(0 2px 10px rgb(0 0 0 / .45));
   transition: transform .25s var(--ease), opacity .25s var(--ease);
+}
+.facade::before {                       /* the rounded badge */
+  width: clamp(2.9rem, 6vw, 3.6rem); aspect-ratio: 68 / 48;
+  translate: -50% -50%;
+  border-radius: 22% / 32%;
+  background: rgb(20 24 28 / .78);
+  filter: drop-shadow(0 2px 10px rgb(0 0 0 / .45));
   opacity: .93;
 }
-.facade:hover .facade__play svg { transform: scale(1.09); opacity: 1; }
+.facade::after {                        /* the triangle */
+  width: clamp(.768rem, 1.588vw, .953rem); aspect-ratio: 18 / 20;
+  translate: -39% -50%;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.facade:hover::before, .facade:hover::after { transform: scale(1.09); }
+.facade:hover::before { opacity: 1; }
 
 .facade iframe { width: 100%; height: 100%; border: 0; display: block; }
 .facade.is-playing { cursor: default; }
 .facade.is-playing:hover img { transform: none; }
+/* once the iframe is in, the badge would sit on top of the player */
+.facade.is-playing::before, .facade.is-playing::after { content: none; }
 
 /* ---------------------------------------------------------------
    9. Long-form: themes + chronology
