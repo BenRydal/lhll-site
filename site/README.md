@@ -5,20 +5,10 @@ build step, no dependencies.
 
 ## Deploying
 
-The git repo is the **parent** folder, so `archive/` is backed up too. Only this
-folder is deployed.
-
-```bash
-cd ..                       # repo root, the folder containing site/ and archive/
-git init && git add -A && git commit -m "Initial commit"
-git remote add origin git@github.com:<you>/<repo>.git
-git push -u origin main
-```
-
-Then import the repo on Vercel and set **Root Directory → `site`**. Framework
-preset "Other", no build command, no output directory — Vercel serves it as-is.
-That Root Directory setting is what keeps `archive/` out of the deploy; without
-it Vercel would serve the repo root and the site would 404.
+Push to `main`. Vercel is already configured with **Root Directory → `site`**,
+framework preset "Other", no build command, no output directory — it serves this
+folder as-is. That Root Directory setting is also what keeps `archive/` out of
+the deploy; without it Vercel would serve the repo root and the site would 404.
 
 `vercel.json` sets `cleanUrls: true`, so `individualsessions.html` is served at
 `/individualsessions`. That keeps the original URLs working, which matters
@@ -30,16 +20,26 @@ To preview locally:
 python3 -m http.server 8788
 ```
 
+Clean URLs are a Vercel behaviour, so under `http.server` the pages are only
+reachable at their `.html` names. The in-page links are written that way — with
+the extension — so local preview works. The cost is that in production every
+internal link takes a 308 to its clean form. It is one cached hop and the
+address bar ends up right either way; dropping the extensions would remove it
+at the price of a preview that no longer navigates.
+
 ## Layout
 
 ```
-*.html            the six pages
+*.html            the six section pages, plus 404.html
 css/site.css      every design decision
 js/site.js        click-to-load video, and nothing else
 assets/img/       images the site serves (1x and @2x)
 assets/pdf/       the six conference documents
 assets/fonts/     the three typefaces, self-hosted, plus their licenses
 favicon.svg       lens mark; .ico and apple-touch-icon.png are the same artwork
+vercel.json       clean URLs and cache headers; the only deploy config
+robots.txt        allow-all, and a pointer to the sitemap
+sitemap.xml       the six pages; 404.html is deliberately absent
 ```
 
 That is the whole site. Everything it needs is in this folder — it makes no
