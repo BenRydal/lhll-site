@@ -38,10 +38,13 @@ css/site.css      every design decision
 js/site.js        click-to-load video, and nothing else
 assets/img/       images the site serves (1x and @2x)
 assets/pdf/       the six conference documents
+assets/fonts/     the three typefaces, self-hosted, plus their licenses
 favicon.svg       lens mark; .ico and apple-touch-icon.png are the same artwork
 ```
 
-That is the whole site. Everything it needs is in this folder.
+That is the whole site. Everything it needs is in this folder — it makes no
+third-party request at all, and nothing outside this folder is fetched at
+runtime until a reader chooses to play a video.
 
 ## Editing
 
@@ -71,6 +74,32 @@ keep that honest — the nav has been stable for the life of the site, and the
 current page is marked with `aria-current="page"` on its own link, so each
 page's copy differs by exactly one attribute. If you add or rename a page,
 grep for `class="nav"` and update all six.
+
+## Fonts
+
+Newsreader, IBM Plex Sans and IBM Plex Mono are served from `assets/fonts/`.
+They are the same woff2 files Google was serving — pulled from its API and
+committed — so the rendering did not change, but no request now leaves the
+site. The old shared-CDN-cache argument for using Google's copy has not
+applied since 2020, when browsers partitioned the HTTP cache by site.
+
+Each family ships `latin` and `latin-ext` faces with `unicode-range`
+descriptors, so `latin-ext` is fetched only if a character in that range
+appears. Nothing on the site uses one today; the files are there so a
+bibliography entry with an unusual name renders correctly rather than
+silently dropping to Georgia.
+
+Two faces are preloaded in each `<head>` — the body sans and the display
+roman, the ones needed for first paint. `crossorigin` on those `<link>`s is
+required even though the files are same-origin: fonts are always fetched in
+CORS mode, and without it the browser downloads them twice.
+
+Both families are SIL OFL 1.1, which permits this but requires the license
+travel with the files: `assets/fonts/OFL-Newsreader.txt` and `OFL-IBMPlex.txt`.
+
+`/assets/fonts/` is cached for a year as `immutable`. If you ever replace a
+font file, **rename it** and update `css/site.css` — a same-named replacement
+would never reach anyone who has already visited.
 
 ## Video
 
