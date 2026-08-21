@@ -46,3 +46,9 @@ tags), and the generator does not know about any of it. Treat `site/` as the
 source of truth and this script as provenance. The generator exists because 34
 near-identical video cards and an 89-entry bibliography were not worth typing by
 hand, not because the site needs a build step.
+
+The drift has since widened, and the markup it emits is now simply wrong for
+the current site. `build.py` still writes an inline play-button SVG into every
+card (drawn in CSS now), `<site-nav>`/`<site-footer>` custom elements (plain
+HTML now), and a Google Fonts `<link>` (self-hosted now). Do not run it with
+`--force` expecting a usable site; read it for the content mapping only.

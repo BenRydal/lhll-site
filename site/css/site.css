@@ -130,7 +130,6 @@
 
   /* cobalt: interaction only */
   --accent:   #1b44cc;
-  --accent-2: #edf0fd;
   /* burnt amber: reserved for the source clip everything refers to */
   --signal:   #b45309;
 
@@ -374,9 +373,13 @@ p { margin: 0 0 1.15em; }
 }
 
 .viewing { margin: 0; }
+/* These are <h2> because they are the page's second-level headings, not
+   because they should look like one — size and tracking are pinned here so
+   the heading level stays a structural decision. */
 .viewing__name {
   font-family: var(--display);
   font-size: 1.02rem; line-height: 1.3;
+  letter-spacing: normal;
   margin-top: .7rem;
 }
 .viewing__meta {
