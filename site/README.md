@@ -35,7 +35,7 @@ python3 -m http.server 8788
 ```
 *.html            the six pages
 css/site.css      every design decision
-js/site.js        <site-nav> / <site-footer> + click-to-load video
+js/site.js        click-to-load video, and nothing else
 assets/img/       images the site serves (1x and @2x)
 assets/pdf/       the six conference documents
 favicon.svg       lens mark; .ico and apple-touch-icon.png are the same artwork
@@ -58,14 +58,19 @@ and `sitemap.xml`).
 from them and now refuses to overwrite `site/` unless forced. Edit the HTML here;
 don't regenerate.
 
-## Shared header and footer
+## Header and footer
 
-`<site-nav>` and `<site-footer>` are custom elements defined in `js/site.js`,
-rendering into light DOM so `site.css` styles them normally. The chrome lives in
-one place without a build step or a library.
+Both are plain HTML, repeated in all six pages. They were custom elements
+rendered by `js/site.js` until it became clear what that cost: if the script
+failed to load, a reader got a page with no navigation and no license notice —
+no way out of the page they landed on. The chrome is the one part a reader
+cannot do without, so it does not depend on JavaScript.
 
-Tradeoff: the nav is rendered by JavaScript, so it isn't in the raw HTML source.
-`sitemap.xml` lists all six URLs so crawlers find every page regardless.
+The duplication is real: editing the nav means editing six files. Two things
+keep that honest — the nav has been stable for the life of the site, and the
+current page is marked with `aria-current="page"` on its own link, so each
+page's copy differs by exactly one attribute. If you add or rename a page,
+grep for `class="nav"` and update all six.
 
 ## Video
 

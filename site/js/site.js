@@ -1,74 +1,14 @@
 /* Learning How to Look & Listen — site behaviour.
-   Two jobs, no dependencies:
-     1. <site-nav> / <site-footer> so the chrome is written once.
-     2. Click-to-load video facades, so 19 YouTube players don't
-        load until someone actually wants to watch one.
-   Custom elements render into light DOM, so site.css styles them
-   normally and there is no shadow-boundary CSS to duplicate. */
+   One job, no dependencies: click-to-load video facades, so 19 YouTube
+   players don't load until someone actually wants to watch one.
+
+   The header and footer used to be rendered here as custom elements.
+   They are plain HTML in each page now: the chrome is the one thing a
+   reader cannot do without, and it should not depend on this file
+   loading. The duplication is the cheaper half of that trade. */
 
 (function () {
   "use strict";
-
-  var PAGES = [
-    ["index.html", "Introduction"],
-    ["individualsessions.html", "Individual Viewing Sessions"],
-    ["groupsession.html", "Group Viewing Session"],
-    ["presentations.html", "Presentations"],
-    ["futuredirections.html", "Future Directions"],
-    ["publications.html", "Publications"]
-  ];
-
-  /* Works for /foo, /foo.html and /  — Vercel serves clean URLs,
-     local file:// browsing uses the .html names. */
-  function currentFile() {
-    var last = location.pathname.split("/").pop();
-    if (!last) return "index.html";
-    return last.indexOf(".") === -1 ? last + ".html" : last;
-  }
-
-  function esc(s) {
-    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-
-  class SiteNav extends HTMLElement {
-    connectedCallback() {
-      var here = currentFile();
-      var items = PAGES.map(function (p) {
-        var current = p[0] === here ? ' aria-current="page"' : "";
-        return '<li><a href="' + p[0] + '"' + current + ">" + esc(p[1]) + "</a></li>";
-      }).join("");
-
-      this.innerHTML =
-        '<header class="masthead">' +
-          '<div class="wrap masthead__inner">' +
-            '<a class="masthead__title" href="index.html">Learning How to Look &amp; Listen</a>' +
-            '<nav aria-label="Sections"><ul class="nav">' + items + "</ul></nav>" +
-          "</div>" +
-        "</header>";
-    }
-  }
-
-  class SiteFooter extends HTMLElement {
-    connectedCallback() {
-      this.innerHTML =
-        '<footer class="foot">' +
-          '<div class="wrap">' +
-            "<p>Supported by the Spencer Foundation &amp; Arizona State University. " +
-            "Website, visualizations, videography and commentary designed by " +
-            '<a href="https://benrydal.com">Ben Rydal Shapiro</a>, Rogers Hall, ' +
-            "Frederick Erickson, Sherman Dorn and Alfredo Artiles.</p>" +
-            '<p>All material is published under a ' +
-            '<a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="license">' +
-            "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</p>" +
-          "</div>" +
-        "</footer>";
-    }
-  }
-
-  customElements.define("site-nav", SiteNav);
-  customElements.define("site-footer", SiteFooter);
-
-  /* ---- video facades ------------------------------------------------ */
 
   function play(btn) {
     var id = btn.getAttribute("data-video");
